@@ -24,6 +24,7 @@ Once the data is loaded (the dowload and extraction of the zip files can be perf
 
 
 | Activity      | Number of instances |   
+|---------------|---------------------|
 | 1             | 3072                |
 | 2             | 3072                |
 | 3             | 3072                |
