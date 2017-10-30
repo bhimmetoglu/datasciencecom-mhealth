@@ -107,5 +107,31 @@ with graph.as_default():
     max_pool_3 = tf.layers.max_pooling1d(inputs=conv3, pool_size=5, strides=5, padding='same')
 ```
 
+### Classifier
+After the final layer, we need to pass to the classifier. To achieve this, we first flatten the final layer (`conv3` in the above snippet) and then use the `dense` function of `layers` module to construct a softmax classifier. With the softmax classifier producing class probabilities, we can compute the loss function (Softmax cross-entropy), and define the optimizer as well as the accuracy which we will use to assess the model performance. These are all implemented in the snippet below:
+
+```python
+with graph.as_default():
+    # Flatten and add dropout
+    flat = tf.reshape(max_pool_3, (-1, 5*184))
+    flat = tf.nn.dropout(flat, keep_prob=keep_prob_)
+    
+    # Predictions
+    logits = tf.layers.dense(flat, n_classes)
+    
+    # Cost function and optimizer
+    cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=logits, labels=labels_))
+    optimizer = tf.train.AdamOptimizer(learning_rate_).minimize(cost)
+    
+    # Accuracy
+    correct_pred = tf.equal(tf.argmax(logits, 1), tf.argmax(labels_, 1))
+    accuracy = tf.reduce_mean(tf.cast(correct_pred, tf.float32), name='accuracy')
+```
+
+Schematically, the architecture of the CNN looks like the figure below (which used 2 convolutional + 2 max pooling layers)
+
+![title](img/1dCNN.png)
+
+
 
 ## Conclusions and Outlook
